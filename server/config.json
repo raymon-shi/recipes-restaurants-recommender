@@ -1,0 +1,9 @@
+{
+  "rds_host": "some-url",
+  "rds_port": "0000",
+  "rds_user": "some-user",
+  "rds_password" : "some-password",
+  "rds_db": "some-database-name",
+  "server_host": "127.0.0.1",
+  "server_port":"8080"
+}
