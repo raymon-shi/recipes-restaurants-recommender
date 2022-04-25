@@ -1,13 +1,16 @@
-import logo from './logo.svg';
-import React, {useState} from 'react';
+import React from 'react';
+import Login from './pages/Login';
 import './App.css';
-import Test from './components/Test'
 
-const App = () => {
-  const [state, setState] = useState('')
-  return (
-    <>
-      <Test />
-    </>
-  )
+class App extends React.Component {
+
+  render() {
+    return (
+      <div>
+        <Login />
+      </div>
+    );
+  }
 }
+
+export default App;
