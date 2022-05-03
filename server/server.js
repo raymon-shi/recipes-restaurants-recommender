@@ -11,7 +11,10 @@ const routes = require('./routes');
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
-app.get('/login/confirm', routes.userExist)
+app.get('/login', routes.userExist);
+app.get('/signup', routes.addUser);
+app.get('/signup/id', routes.getUserCount);
+app.get('/get', routes.get);
 app.get('/searchRecipes', routes.searchGetRecipeRecommendations);
 app.get('/searchRestaurants', routes.searchGetRestaurantRecommendations);
 

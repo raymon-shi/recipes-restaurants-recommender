@@ -1,9 +1,6 @@
-* {
-    background-color: #3a3a3a;
-}
-
-h1, h2, h3, h4, h5, h6 {
+.Login-header {
     background-color: blanchedalmond;
+    font-weight: bold;
 }
 
 .Main {
@@ -33,7 +30,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
-input[type = 'text'], input[type='password'] {
+.Login-text {
     background-color: blanchedalmond;
     color:#3a3a3a;
     border: none;
@@ -45,7 +42,7 @@ input[type = 'text'], input[type='password'] {
     width: 100%;
 }
 
-button[type='submit'], button[type='sign'], button[type='login'] {
+.Login-button {
     width: 100%;
     padding: 7px;
     margin: 5px;
