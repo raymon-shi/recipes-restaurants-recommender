@@ -8,6 +8,7 @@ import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
 import RecipeResult from './components/recipe/recipe';
 import { Container } from 'react-bootstrap';
+import RestaurantResult from './components/restaurant/restaurant';
 
 const App = () => {
   const [state, setState] = useState('');
@@ -21,8 +22,8 @@ const App = () => {
           <Route exact path='/' element={<Home />} />
           <Route exact path='/searchRecipe/:restaurantName/:rating/:prepTime' element={<SearchRecipe />} />
           <Route exact path='/searchRestaurant/:recipeName/:starRating/:reviewCount' element={<SearchRestaurant />} />
-          <Route exact path='/recipe/:recipeID' element={<RecipeResult />} />
-          <Route exact path='/restaurant/:restaurantID' />
+          <Route exact path='/recipe/:recipeId' element={<RecipeResult />} />
+          <Route exact path='/restaurant/:restaurantId' element={<RestaurantResult />} />
         </Routes>
       </BrowserRouter>
     </>

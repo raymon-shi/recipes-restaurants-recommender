@@ -105,7 +105,7 @@ const recipe = async (req, res) => {
         WHERE R.recipe_id = ${recipeId}
     )
     SELECT M.recipe_id as ID, totalTime, name, rating, cuisine, ingredient 
-    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id
+    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id 
     `,
       (error, results, fields) => {
         if (error) {
@@ -125,22 +125,16 @@ const recipe = async (req, res) => {
 const restaurant = async (req, res) => {
   const { query } = req;
   const { restaurantId } = query;
-
   if (restaurantId) {
     connection.query(
       `
     WITH main AS (
         SELECT *
         FROM Restaurants R
-        WHERE R.restaurants_id = ${restaurantId}
-    ),
-    restaurantCategories AS (
-        SELECT DISTINCT category
-        FROM Restaurant_Categories
-        WHERE restaurant_id = ${restaurantId}
+        WHERE R.restaurant_id = ${restaurantId}
     )
     SELECT * 
-    FROM main M JOIN restaurantCategories RC ON M.restaurant_id = RC.restaurant_id
+    FROM main M JOIN Restaurant_Categories RC ON M.restaurant_id = RC.restaurant_id
     `,
       (error, results, fields) => {
         if (error) {
