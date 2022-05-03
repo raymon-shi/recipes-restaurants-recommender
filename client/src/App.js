@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home/Home';
+import Login from './pages/Login';
 import NavHeader from './components/home/NavHeader';
 import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
@@ -20,6 +21,8 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route exact path='/' element={<Home />} />
+          {/* localhost:3000/login will be the route for login */}
+          <Route exact path='/login' element={<Login />} />
           <Route exact path='/searchRecipe/:restaurantName/:rating/:prepTime' element={<SearchRecipe />} />
           <Route exact path='/searchRestaurant/:recipeName/:starRating/:reviewCount' element={<SearchRestaurant />} />
           <Route exact path='/recipe/:recipeId' element={<RecipeResult />} />
