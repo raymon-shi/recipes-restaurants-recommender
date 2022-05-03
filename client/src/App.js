@@ -21,8 +21,8 @@ const App = () => {
           <Route exact path='/' element={<Home />} />
           {/* localhost:3000/login will be the route for login */}
           <Route exact path='/login' element={<Login />} />
-          <Route exact path='/searchRecipe/:restaurantName/:rating/:prepTime' element={<SearchRecipe />} />
-          <Route exact path='/searchRestaurant/:recipeName/:starRating/:reviewCount' element={<SearchRestaurant />} />
+          <Route exact path='/searchRecipe/:restaurantName/:ingredients/:rating/:prepTime' element={<SearchRecipe />} />
+          <Route exact path='/searchRestaurant/:recipeName/:state/:starRating/:reviewCount' element={<SearchRestaurant />} />
           <Route exact path='/recipe/:recipeID' />
           <Route exact path='/restaurant/:restaurantID' />
         </Routes>

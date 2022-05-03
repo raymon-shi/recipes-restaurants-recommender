@@ -6,13 +6,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 const SearchRecipe = () => {
   const [recipeRecommendations, setRecipeRecommendations] = useState([]);
-  const { restaurantName, rating, prepTime } = useParams();
+  const { restaurantName, ingredients, rating, prepTime } = useParams();
 
   const navigate = useNavigate();
 
   const gettingSearchResults = async () => {
     try {
-      const { data } = await axios.get('/searchRecipes', { params: { restaurantName, rating, prepTime } });
+      const { data } = await axios.get('/searchRecipes', { params: { restaurantName, ingredients, rating, prepTime } });
       setRecipeRecommendations(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
@@ -37,23 +37,28 @@ const SearchRecipe = () => {
   return (
     <>
       <Container>
-        <h1>{`Recipe Recommendations based on "${restaurantName}"`}</h1>
+        <h1>Recipe Recommendations based on: </h1>
+        <h2>{`Name: ${restaurantName}`}</h2>
+        <h2>{`Ingredients: ${ingredients}`}</h2>
+        <h2>{`Minimum Recipe Rating: ${rating} / 5`}</h2>
+        <h2>{`Maximum Preptime: ${prepTime} minutes`}</h2>
         <hr />
         {Array(rows)
           .fill()
           .map((_, rowIndex) => (
-            <Row key={uuidv4()} className='mt-4' xs={4}>
+            <Row key={uuidv4()} className="mt-4" xs={4}>
               {recipeRecommendations.slice(rowIndex * 4, rowIndex * 4 + 4).map((result) => (
                 <Col key={uuidv4()}>
                   <Card key={uuidv4()} style={{ width: '18rem', height: '30rem' }}>
-                    <Card.Img variant='top' src={result.imageLink} style={{ height: '18rem', width: '18rem' }} />
+                    <Card.Img variant="top" src={result.imageLink} style={{ height: '18rem', width: '18rem' }} />
                     <Card.Body>
                       <Card.Title>{result.recipeName}</Card.Title>
                       <Card.Text>Rating: {result.recipeRating}</Card.Text>
                       <Card.Text>Prep Time: {result.totalTime}</Card.Text>
-                      <Button variant='primary' onClick={() => navigate(`/recipe/${result.recipe_id}`)}>
+                      <Button variant="primary" onClick={() => navigate(`/recipe/${result.recipe_id}`)}>
                         Check out this recipe!
                       </Button>
+                      <Button variant="success">Save this recipe!</Button>
                     </Card.Body>
                   </Card>
                 </Col>

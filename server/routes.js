@@ -19,31 +19,36 @@ async function userExist(req, res) {
   const email = req.query.Email;
   const password = req.query.Password;
 
-  connection.query(`SELECT id
+  connection.query(
+    `SELECT id
         FROM User 
-        WHERE email = '${email}' AND password = '${password}'`, function (error, results, fields) {
-
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
+        WHERE email = '${email}' AND password = '${password}'`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
 }
 
 const searchGetRecipeRecommendations = async (req, res) => {
   const { query } = req;
-  const { restaurantName, rating, prepTime } = query;
+  const { restaurantName, rating, prepTime, ingredients } = query;
 
-  if (restaurantName && rating && prepTime) {
+  const rName = restaurantName === 'all' ? '' : restaurantName;
+  const iList = ingredients === 'all' ? '.*' : ingredients;
+
+  if (restaurantName && rating && prepTime && ingredients) {
     connection.query(
       `
     WITH restID AS (
       SELECT restaurant_id
       FROM Restaurants R
-      WHERE R.name LIKE '%${restaurantName}%'
-      LIMIT 1
+      WHERE R.name LIKE '%${rName}%' OR R.name NOT LIKE '%%'
+      LIMIT 500
     ),
     restCategories AS (
     SELECT RC.category
@@ -54,11 +59,13 @@ const searchGetRecipeRecommendations = async (req, res) => {
         FROM Cuisines RC JOIN restCategories RTC ON RC.cuisine LIKE CONCAT('%', RTC.category, '%')
     ),
     recipeRecommendations AS (
-      SELECT R.recipe_id as recipe_id, R.totalTime as totalTime, R.name as recipeName, R.rating AS recipeRating
-      FROM recipeWithSameCuisine RWSC JOIN Recipes R ON RWSC.recipe_id = R.recipe_id
-      WHERE R.totalTime <= ${parseInt(prepTime, 10)} AND R.rating >= ${parseInt(rating, 10)}
+      SELECT R.recipe_id as recipe_id, R.totalTime as totalTime, R.name as recipeName, R.rating AS recipeRating, I.ingredient as ingredient
+      FROM recipeWithSameCuisine RWSC 
+        JOIN Recipes R ON RWSC.recipe_id = R.recipe_id
+        JOIN Ingredients I on R.recipe_id = I.recipe_id
+      WHERE R.totalTime <= ${parseInt(prepTime, 10)} AND R.rating >= ${parseInt(rating, 10)} AND I.ingredient REGEXP '${iList}'
     )
-    SELECT RR.recipe_id AS recipe_id, RR.recipeName AS recipeName, RR.totalTime AS totalTime, RR.recipeRating as recipeRating, I.images AS imageLink
+    SELECT DISTINCT RR.recipe_id AS recipe_id, RR.recipeName AS recipeName, RR.totalTime AS totalTime, RR.recipeRating as recipeRating, I.images AS imageLink
     FROM Images I JOIN recipeRecommendations RR ON I.recipe_id = RR.recipe_id
     `,
       (error, results, fields) => {
@@ -74,7 +81,10 @@ const searchGetRecipeRecommendations = async (req, res) => {
 
 const searchGetRestaurantRecommendations = async (req, res) => {
   const { query } = req;
-  const { recipeName, starRating, reviewCount } = query;
+  const { recipeName, state, starRating, reviewCount } = query;
+
+  const rName = recipeName === 'all' ? '' : recipeName;
+  const sName = state === 'all' ? '' : state;
 
   if (recipeName && starRating && reviewCount) {
     connection.query(
@@ -82,7 +92,8 @@ const searchGetRestaurantRecommendations = async (req, res) => {
     WITH recipeID AS (
         SELECT recipe_id
         FROM Recipes R
-        WHERE R.name LIKE '%${recipeName}%'
+        WHERE R.name LIKE '%${rName}%' OR R.name NOT LIKE '%%'
+        LIMIT 100
     ),
     recipeCuisines AS (
         SELECT DISTINCT C.cuisine
@@ -94,7 +105,7 @@ const searchGetRestaurantRecommendations = async (req, res) => {
     )
     SELECT DISTINCT R.restaurant_id, R.name, R.address, R.city, R.state, R.rating, R.review_count, RC.category
     FROM restCategories RC JOIN Restaurants R ON RC.restaurant_id = R.restaurant_id
-    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(reviewCount, 10)}
+    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(reviewCount, 10)} AND R.state = '${sName}'
     `,
       (error, results, fields) => {
         if (error) {
@@ -112,5 +123,4 @@ module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
   userExist,
-
 };
