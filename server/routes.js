@@ -278,6 +278,8 @@ const searchGetBestRecipeLowestRating = async (req, res) => {
       }
     },
   );
+};
+
 const recipe = async (req, res) => {
   const { query } = req;
   const { recipeId } = query;
