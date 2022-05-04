@@ -7,9 +7,11 @@ import Login from './pages/Login';
 import NavHeader from './components/home/NavHeader';
 import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
+import RecipeResult from './components/recipe/recipe';
 import { Container } from 'react-bootstrap';
 import SearchPresetRestaurant from './components/search/SearchPresetRestaurant'
 import SearchPresetRecipe from './components/search/SearchPresetRecipe'
+import RestaurantResult from './components/restaurant/restaurant';
 
 const App = () => {
   const [state, setState] = useState('');

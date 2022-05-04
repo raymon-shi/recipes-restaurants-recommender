@@ -21,6 +21,8 @@ app.get('/searchPresetRecipeBestPerCuisine', routes.searchGetBestRecipePerCuisin
 app.get('/searchPresetRecipeBestAboveAverage', routes.searchGetBestRecipeAboveAverage);
 app.get('/searchPresetRecipeBestHighestRating', routes.searchGetBestRecipeHighestRating);
 app.get('/searchPresetRecipeBestLowestRating', routes.searchGetBestRecipeLowestRating);
+app.get('/recipe', routes.recipe);
+app.get('/restaurant', routes.restaurant);
 
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
