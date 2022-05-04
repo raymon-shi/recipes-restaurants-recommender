@@ -11,60 +11,73 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const exampleFunction = async () => {
-  console.log('hello world');
+const get = async (req, res) => {
+  console.log('top');
+  console.log(req.session.email + ' ' + ' /getmethod');
+  res.send({ email: req.session.email });
 };
 
-const get = async (req, res) => {
-  res.send({ name: req.session.name, email: req.session.email });
+const logout = async (req, res) => {
+  console.log('HELLLO');
+  req.session.email = undefined;
+  console.log(req.session.email);
+  res.send(req.session.email);
 };
 
 const userExist = async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { body } = req;
+  const { email } = body;
+  const { password } = body;
 
-  connection.query(`SELECT id
+  connection.query(
+    `SELECT id
         FROM User 
-        WHERE email = '${email}' AND password = '${password}'`, function (error, results, fields) {
-
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
+        WHERE email = '${email}' AND password = '${password}'`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        console.log(results);
+        req.session.email = email;
+        res.json({ results: results });
+      }
+    },
+  );
 };
 
 const getUserCount = async (req, res) => {
-
-  connection.query(`SELECT COUNT(id)
-        FROM User`, function (error, results, fields) {
-
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
+  connection.query(
+    `SELECT COUNT(id)
+        FROM User`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
 };
 
 const addUser = async (req, res) => {
   const { body } = req;
   const { email, firstName, lastName, password, dob, id } = body;
-  console.log(email);
+  const preferences = 'None';
+  console.log(`${typeof email} | ${firstName} | ${lastName} | ${password} | ${dob} | ${id}`);
 
-  connection.query(`INSERT INTO User 
-        VALUES (${id}, ${firstName}, ${lastName}, ${password}, ${dob}, ${email}, None)`, function (error, results, fields) {
-
-            if (error) {
-                console.log(error)
-                res.json({ error: error })
-            } else if (results) {
-                res.json({ results: results })
-            }
-        });
+  connection.query(
+    `INSERT INTO User VALUES (${id}, '${firstName}', '${lastName}', '${password}', '${dob}', '${email}', '${preferences}');`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
 };
 
 const searchGetRecipeRecommendations = async (req, res) => {
@@ -150,4 +163,5 @@ module.exports = {
   addUser,
   getUserCount,
   get,
+  logout,
 };

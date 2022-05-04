@@ -12,26 +12,6 @@ import { Container } from 'react-bootstrap';
 import axios from 'axios';
 
 const App = () => {
-  const [state, setState] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-
-  const checkUserLoggedIn = async () => {
-    try {
-      const user = await axios.get('/account/user');
-      if (Object.keys(user.data).length > 0) {
-        setUsername(user.data.name);
-        setLoggedIn(true);
-      }
-    } catch (error) {
-      Error('There was an error with getting the user information');
-    }
-  }
-
-  useEffect(() => {
-    checkUserLoggedIn();
-  });
-
   return (
     <>
       <Container>
@@ -39,14 +19,14 @@ const App = () => {
       </Container>
       <BrowserRouter>
         <Routes>
-          <Route exact path='/' element={<Home />} />
+          <Route exact path="/" element={<Home />} />
           {/* localhost:3000/login will be the route for login */}
-          <Route exact path='/login' element={<Login />} />
-          <Route exact path='/signup' element={<SignInForm />} />
-          <Route exact path='/searchRecipe/:restaurantName/:rating/:prepTime' element={<SearchRecipe />} />
-          <Route exact path='/searchRestaurant/:recipeName/:starRating/:reviewCount' element={<SearchRestaurant />} />
-          <Route exact path='/recipe/:recipeID' />
-          <Route exact path='/restaurant/:restaurantID' />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/signup" element={<SignInForm />} />
+          <Route exact path="/searchRecipe/:restaurantName/:rating/:prepTime" element={<SearchRecipe />} />
+          <Route exact path="/searchRestaurant/:recipeName/:starRating/:reviewCount" element={<SearchRestaurant />} />
+          <Route exact path="/recipe/:recipeID" />
+          <Route exact path="/restaurant/:restaurantID" />
         </Routes>
       </BrowserRouter>
     </>
