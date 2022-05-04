@@ -29,8 +29,8 @@ const App = () => {
           <Route exact path='/searchRestaurant/:recipeName/:state/:starRating/:reviewCount' element={<SearchRestaurant />} />
           <Route exact path='/searchPresetRestaurant/:preset' element={<SearchPresetRestaurant />} />
           <Route exact path='/searchPresetRecipe/:preset' element={<SearchPresetRecipe />} />
-          <Route exact path='/recipe/:recipeID' />
-          <Route exact path='/restaurant/:restaurantID' />
+          <Route exact path='/recipe/:recipeId' element={<RecipeResult />}/>
+          <Route exact path='/restaurant/:restaurantId' element={<RestaurantResult />}/>
         </Routes>
       </BrowserRouter>
     </>
