@@ -93,7 +93,6 @@ const searchGetRestaurantRecommendations = async (req, res) => {
         SELECT recipe_id
         FROM Recipes R
         WHERE R.name LIKE '%${rName}%' OR R.name NOT LIKE '%%'
-        LIMIT 100
     ),
     recipeCuisines AS (
         SELECT DISTINCT C.cuisine
@@ -105,13 +104,17 @@ const searchGetRestaurantRecommendations = async (req, res) => {
     )
     SELECT DISTINCT R.restaurant_id, R.name, R.address, R.city, R.state, R.rating, R.review_count, RC.category
     FROM restCategories RC JOIN Restaurants R ON RC.restaurant_id = R.restaurant_id
-    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(reviewCount, 10)} AND R.state = '${sName}'
+    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(
+        reviewCount,
+        10,
+      )} AND R.state LIKE '%${sName}%' OR R.state NOT LIKE '%%'
+    ORDER BY R.name
+    LIMIT 500
     `,
       (error, results, fields) => {
         if (error) {
           res.json({ error });
         } else if (results) {
-          console.log(results.length);
           res.json({ results });
         }
       },
@@ -119,8 +122,168 @@ const searchGetRestaurantRecommendations = async (req, res) => {
   }
 };
 
+const searchGetBestRestaurantsAndRecipePerCity = async (req, res) => {
+  connection.query(
+    `
+      WITH bestRest AS (
+        SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+        FROM Restaurants R
+        GROUP BY city
+        HAVING MAX(R.rating)
+    ),
+         bestRec AS (
+            SELECT R.recipe_id, R.name, C.cuisine, R.totalTime
+            FROM Recipes R JOIN Cuisines C ON R.recipe_id = C.recipe_id
+            GROUP BY C.cuisine HAVING MAX(R.rating)
+         ),
+         bestRestC AS (
+            SELECT bestRest.restaurant_id , bestRest.name, bestRest.city, RC.Category, bestRest.address AS address, bestRest.state AS state, bestRest.rating AS rating, bestRest.review_count AS review_count
+            FROM bestRest JOIN Restaurant_Categories RC ON bestRest.restaurant_id = RC.restaurant_id
+         )
+      SELECT DISTINCT bestRestC.restaurant_id AS restaurant_id, bestRestC.name AS name, bestRestC.city AS city, bestRec.name AS recipe_name, bestRec.cuisine AS cuisine, bestRestC.address AS address, bestRestC.state AS state, bestRestC.rating AS rating, bestRestC.review_count AS review_count
+      FROM bestRestC JOIN bestRec ON bestRestC.category LIKE CONCAT('%', bestRec.cuisine, '%')
+      WHERE bestRec.totalTime <= 60
+      ORDER BY bestRestC.city
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRestaurantsPerCity = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+    FROM Restaurants R
+    GROUP BY city
+    HAVING MAX(R.rating)
+    ORDER BY R.city
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRestaurantsPerState = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+    FROM Restaurants R
+    GROUP BY state
+    HAVING MAX(R.rating)
+    ORDER BY R.state
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipePerCuisine = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, C.cuisine AS cuisine, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+        JOIN Cuisines C on R.recipe_id = C.recipe_id
+    GROUP BY C.cuisine
+    HAVING MAX(R.rating)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeAboveAverage = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating >= (SELECT FLOOR(AVG(R.rating)) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeHighestRating = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating >= (SELECT MAX(R.rating) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeLowestRating = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating = (SELECT MIN(R.rating) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
 module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
+  searchGetBestRestaurantsAndRecipePerCity,
+  searchGetBestRestaurantsPerCity,
+  searchGetBestRestaurantsPerState,
+  searchGetBestRecipePerCuisine,
+  searchGetBestRecipeAboveAverage,
+  searchGetBestRecipeHighestRating,
+  searchGetBestRecipeLowestRating,
   userExist,
 };

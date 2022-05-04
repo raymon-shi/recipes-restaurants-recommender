@@ -8,6 +8,8 @@ import NavHeader from './components/home/NavHeader';
 import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
 import { Container } from 'react-bootstrap';
+import SearchPresetRestaurant from './components/search/SearchPresetRestaurant'
+import SearchPresetRecipe from './components/search/SearchPresetRecipe'
 
 const App = () => {
   const [state, setState] = useState('');
@@ -23,6 +25,8 @@ const App = () => {
           <Route exact path='/login' element={<Login />} />
           <Route exact path='/searchRecipe/:restaurantName/:ingredients/:rating/:prepTime' element={<SearchRecipe />} />
           <Route exact path='/searchRestaurant/:recipeName/:state/:starRating/:reviewCount' element={<SearchRestaurant />} />
+          <Route exact path='/searchPresetRestaurant/:preset' element={<SearchPresetRestaurant />} />
+          <Route exact path='/searchPresetRecipe/:preset' element={<SearchPresetRecipe />} />
           <Route exact path='/recipe/:recipeID' />
           <Route exact path='/restaurant/:restaurantID' />
         </Routes>

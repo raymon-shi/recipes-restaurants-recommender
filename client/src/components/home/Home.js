@@ -176,6 +176,38 @@ const Home = () => {
               Get Recipe Recommendations!
             </Button>
           </Form>
+          <hr />
+          <h3>Preset Recipe Recommendations</h3>
+          <Form.Group style={{ display: 'flex', flexDirection: 'column', width: '25%' }}>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRecipe/Best-Recipes-Per-Cuisine');
+              }}>
+              Best Recipes Per Cuisine
+            </Button>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRecipe/Best-Recipes-Above-Average');
+              }}>
+              Recipes Above Average
+            </Button>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRecipe/Best-Recipes-Highest-Rating');
+              }}>
+              Recipes Highest Rating
+            </Button>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRecipe/Best-Recipes-Lowest-Rating');
+              }}>
+              Recipes Lowest Ratings
+            </Button>
+          </Form.Group>
         </Tab>
         <Tab eventKey="restaurants" title="Restaurants Recommender">
           <Form onSubmit={(e) => e.preventDefault()}>
@@ -188,11 +220,11 @@ const Home = () => {
                 onChange={(e) => setRestaurantRecipeName(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className='mb-3' controlId='formBasicState'>
+            <Form.Group className="mb-3" controlId="formBasicState">
               {currState}
               <Form.Label>State</Form.Label>
               <Form.Select value={currState} onChange={(e) => setCurrState(e.target.value)} required>
-                <option value=''>State</option>
+                <option value="">State</option>
                 {states.map((state) => (
                   <option key={uuidv4()} value={state.abbreviation}>
                     {state.abbreviation}
@@ -202,7 +234,15 @@ const Home = () => {
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicRating">
               <Form.Label>Star Rating (Minimum)</Form.Label>
-              <Form.Check defaultChecked type="radio" name="rating" id="default-radio-1" label="1" value="1" onChange={(e) => setRestaurantRating(e.target.value)} />
+              <Form.Check
+                defaultChecked
+                type="radio"
+                name="rating"
+                id="default-radio-1"
+                label="1"
+                value="1"
+                onChange={(e) => setRestaurantRating(e.target.value)}
+              />
               <Form.Check type="radio" name="rating" id="default-radio-2" label="2" value="2" onChange={(e) => setRestaurantRating(e.target.value)} />
               <Form.Check type="radio" name="rating" id="default-radio-3" label="3" value="3" onChange={(e) => setRestaurantRating(e.target.value)} />
               <Form.Check type="radio" name="rating" id="default-radio-4" label="4" value="4" onChange={(e) => setRestaurantRating(e.target.value)} />
@@ -226,6 +266,31 @@ const Home = () => {
               Get Restaurant Recommendations!
             </Button>
           </Form>
+          <hr />
+          <h3>Preset Restaurant Recommendations</h3>
+          <Form.Group style={{ display: 'flex', flexDirection: 'column', width: '25%' }}>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRestaurant/Best-Restaurant-Per-City');
+              }}>
+              Best Restaurant For Each City
+            </Button>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRestaurant/Best-Restaurant-Per-State');
+              }}>
+              Best Restaurant For Each State
+            </Button>
+            <Button
+              className="mb-3"
+              onClick={() => {
+                navigate('/searchPresetRestaurant/Best-Restaurant-Recipe-Per-City');
+              }}>
+              Best Restaurant and Matching Recipe Cuisine For Each City
+            </Button>
+          </Form.Group>
         </Tab>
       </Tabs>
     </Container>

@@ -4,45 +4,58 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-const SearchRestaurant = () => {
+const SearchPresetRestaurant = () => {
   const [restaurantRecommendations, setRestaurantRecommendations] = useState([]);
-  const { recipeName, state, starRating, reviewCount } = useParams();
+  const { preset } = useParams();
 
   const navigate = useNavigate();
 
-  const gettingSearchResults = async () => {
+  const gettingSearchResultsRestaurantsRecipesPerCity = async () => {
     try {
-      const { data } = await axios.get('/searchRestaurants', { params: { recipeName, state, starRating, reviewCount } });
+      const { data } = await axios.get('/searchPresetRestaurantsRecipePerCity');
       setRestaurantRecommendations(data.results);
-      console.log(data.results)
+    } catch (error) {
+      alert('There was an error getting restaurant recommendations!');
+    }
+  };
+
+  const gettingSearchResultsRestaurantsPerCity = async () => {
+    try {
+      const { data } = await axios.get('/searchPresetRestaurantsBestPerCity');
+      setRestaurantRecommendations(data.results);
+    } catch (error) {
+      alert('There was an error getting restaurant recommendations!');
+    }
+  };
+
+  const gettingSearchResultsRestaurantsPerState = async () => {
+    try {
+      const { data } = await axios.get('/searchPresetRestaurantsBestPerState');
+      setRestaurantRecommendations(data.results);
     } catch (error) {
       alert('There was an error getting restaurant recommendations!');
     }
   };
 
   useEffect(() => {
-    gettingSearchResults();
+    if (preset === 'Best-Restaurant-Recipe-Per-City') {
+      gettingSearchResultsRestaurantsRecipesPerCity();
+    }
+    if (preset === 'Best-Restaurant-Per-City') {
+      gettingSearchResultsRestaurantsPerCity();
+    }
+    if (preset === 'Best-Restaurant-Per-State') {
+      gettingSearchResultsRestaurantsPerState();
+    }
   }, []);
 
   const rows = Math.ceil(restaurantRecommendations.length / 4);
-  // const active = 1;
-  // let items = [];
-  // for (let number = 1; number <= 5; number++) {
-  //   items.push(
-  //     <Pagination.Item key={number} active={number === active}>
-  //       {number}
-  //     </Pagination.Item>,
-  //   );
-  // }
 
   return (
     <>
       <Container>
         <h1>Restaurant Recommendations based on: </h1>
-        <h2>{`Name: ${recipeName}`}</h2>
-        <h2>{`State: ${state}`}</h2>
-        <h2>{`Minimum Star Rating: ${starRating} / 5`}</h2>
-        <h2>{`Minimum Reviews: ${reviewCount} reviews`}</h2>
+        <h2>{`Preset: ${preset}`}</h2>
         <hr />
         {Array(rows)
           .fill()
@@ -50,13 +63,20 @@ const SearchRestaurant = () => {
             <Row key={uuidv4()} className="mt-4" xs={4}>
               {restaurantRecommendations.slice(rowIndex * 4, rowIndex * 4 + 4).map((result) => (
                 <Col key={uuidv4()}>
-                  <Card key={uuidv4()} style={{ width: '18rem', height: '25rem' }}>
+                  {console.log(result)}
+                  <Card key={uuidv4()} style={{ width: '18rem', height: '30rem' }}>
                     <Card.Body>
                       <Card.Title>{result.name}</Card.Title>
                       <Card.Text>Category: {result.category}</Card.Text>
                       <Card.Text>Address: {`${result.address}, ${result.city} ${result.state}`}</Card.Text>
                       <Card.Text>Rating: {result.rating}</Card.Text>
                       <Card.Text>Review Count: {result.review_count}</Card.Text>
+                      {preset === 'Best-Restaurant-Recipe-Per-City' ? (
+                        <>
+                          <Card.Text>Best Recipe: {result.recipe_name}</Card.Text>
+                          <Card.Text>Best Recipe Cusine: {result.cuisine}</Card.Text>
+                        </>
+                      ) : null}
                       <Button variant="primary" onClick={() => navigate(`/restaurant/${result.restaurant_id}`)}>
                         Check out this restaurant!
                       </Button>
@@ -67,18 +87,9 @@ const SearchRestaurant = () => {
             </Row>
           ))}
         <hr />
-        {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Pagination>
-            <Pagination.First />
-            <Pagination.Prev />
-            {items}
-            <Pagination.Next />
-            <Pagination.Last />
-          </Pagination>
-        </div> */}
       </Container>
     </>
   );
 };
 
-export default SearchRestaurant;
+export default SearchPresetRestaurant;
