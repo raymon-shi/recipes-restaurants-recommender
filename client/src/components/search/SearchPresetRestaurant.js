@@ -63,7 +63,6 @@ const SearchPresetRestaurant = () => {
             <Row key={uuidv4()} className="mt-4" xs={4}>
               {restaurantRecommendations.slice(rowIndex * 4, rowIndex * 4 + 4).map((result) => (
                 <Col key={uuidv4()}>
-                  {console.log(result)}
                   <Card key={uuidv4()} style={{ width: '18rem', height: '30rem' }}>
                     <Card.Body>
                       <Card.Title>{result.name}</Card.Title>

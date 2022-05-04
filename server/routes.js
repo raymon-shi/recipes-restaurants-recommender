@@ -67,6 +67,7 @@ const searchGetRecipeRecommendations = async (req, res) => {
     )
     SELECT DISTINCT RR.recipe_id AS recipe_id, RR.recipeName AS recipeName, RR.totalTime AS totalTime, RR.recipeRating as recipeRating, I.images AS imageLink
     FROM Images I JOIN recipeRecommendations RR ON I.recipe_id = RR.recipe_id
+    LIMIT 500
     `,
       (error, results, fields) => {
         if (error) {
@@ -144,6 +145,7 @@ const searchGetBestRestaurantsAndRecipePerCity = async (req, res) => {
       FROM bestRestC JOIN bestRec ON bestRestC.category LIKE CONCAT('%', bestRec.cuisine, '%')
       WHERE bestRec.totalTime <= 60
       ORDER BY bestRestC.city
+      LIMIT 500
       `,
     (error, results, fields) => {
       if (error) {
@@ -163,6 +165,7 @@ const searchGetBestRestaurantsPerCity = async (req, res) => {
     GROUP BY city
     HAVING MAX(R.rating)
     ORDER BY R.city
+    LIMIT 500
       `,
     (error, results, fields) => {
       if (error) {
@@ -182,6 +185,7 @@ const searchGetBestRestaurantsPerState = async (req, res) => {
     GROUP BY state
     HAVING MAX(R.rating)
     ORDER BY R.state
+    LIMIT 500
       `,
     (error, results, fields) => {
       if (error) {

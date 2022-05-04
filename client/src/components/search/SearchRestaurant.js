@@ -14,7 +14,6 @@ const SearchRestaurant = () => {
     try {
       const { data } = await axios.get('/searchRestaurants', { params: { recipeName, state, starRating, reviewCount } });
       setRestaurantRecommendations(data.results);
-      console.log(data.results)
     } catch (error) {
       alert('There was an error getting restaurant recommendations!');
     }
@@ -25,15 +24,6 @@ const SearchRestaurant = () => {
   }, []);
 
   const rows = Math.ceil(restaurantRecommendations.length / 4);
-  // const active = 1;
-  // let items = [];
-  // for (let number = 1; number <= 5; number++) {
-  //   items.push(
-  //     <Pagination.Item key={number} active={number === active}>
-  //       {number}
-  //     </Pagination.Item>,
-  //   );
-  // }
 
   return (
     <>

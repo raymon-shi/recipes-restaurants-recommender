@@ -14,7 +14,6 @@ const SearchPresetRecipe = () => {
     try {
       const { data } = await axios.get('/searchPresetRecipeBestPerCuisine');
       setRecipeRecommendations(data.results);
-      console.log(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
     }
@@ -23,7 +22,6 @@ const SearchPresetRecipe = () => {
   const gettingSearchResultsRecipesBestAboveAverage = async () => {
     try {
       const { data } = await axios.get('/searchPresetRecipeBestAboveAverage');
-      console.log(JSON.stringify(data) + ' HELLO WROLD');
       setRecipeRecommendations(data.results);
     } catch (error) {
       console.log(error);
@@ -35,7 +33,6 @@ const SearchPresetRecipe = () => {
     try {
       const { data } = await axios.get('/searchPresetRecipeBestHighestRating');
       setRecipeRecommendations(data.results);
-      console.log(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
     }
@@ -45,7 +42,6 @@ const SearchPresetRecipe = () => {
     try {
       const { data } = await axios.get('/searchPresetRecipeBestLowestRating');
       setRecipeRecommendations(data.results);
-      console.log(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
     }
@@ -56,7 +52,6 @@ const SearchPresetRecipe = () => {
       gettingSearchResultsRecipesBestPerCuisine();
     }
     if (preset === 'Best-Recipes-Above-Average') {
-      console.log('average');
       gettingSearchResultsRecipesBestAboveAverage();
     }
     if (preset === 'Best-Recipes-Highest-Rating') {
@@ -67,7 +62,6 @@ const SearchPresetRecipe = () => {
     }
   }, []);
 
-  console.log(recipeRecommendations);
   const rows = Math.ceil(recipeRecommendations.length / 4);
 
   return (
