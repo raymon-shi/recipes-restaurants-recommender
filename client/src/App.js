@@ -4,6 +4,8 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home/Home';
 import Login from './pages/Login';
+import Blogs from './pages/Blogs';
+import Account from './pages/Account';
 import NavHeader from './components/home/NavHeader';
 import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
@@ -25,12 +27,16 @@ const App = () => {
           <Route exact path='/' element={<Home />} />
           {/* localhost:3000/login will be the route for login */}
           <Route exact path='/login' element={<Login />} />
+
           <Route exact path='/searchRecipe/:restaurantName/:ingredients/:rating/:prepTime' element={<SearchRecipe />} />
           <Route exact path='/searchRestaurant/:recipeName/:state/:starRating/:reviewCount' element={<SearchRestaurant />} />
           <Route exact path='/searchPresetRestaurant/:preset' element={<SearchPresetRestaurant />} />
           <Route exact path='/searchPresetRecipe/:preset' element={<SearchPresetRecipe />} />
           <Route exact path='/recipe/:recipeId' element={<RecipeResult />}/>
           <Route exact path='/restaurant/:restaurantId' element={<RestaurantResult />}/>
+          <Route exact path='/account' element={<Account />} />
+          <Route exact path='/blogs' element={<Blogs />} />
+
         </Routes>
       </BrowserRouter>
     </>

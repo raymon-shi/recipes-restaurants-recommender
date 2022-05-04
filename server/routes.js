@@ -34,6 +34,23 @@ async function userExist(req, res) {
   );
 }
 
+async function userInfo(req, res) {
+  const email = req.query.Email;
+  const password = req.query.Password;
+
+  connection.query(`SELECT id, first_name, last_name, DOB, email, preferences
+        FROM User 
+        WHERE email = '${email}' AND password = '${password}'`, function (error, results, fields) {
+
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        });
+}
+
 const searchGetRecipeRecommendations = async (req, res) => {
   const { query } = req;
   const { restaurantName, rating, prepTime, ingredients } = query;
@@ -348,4 +365,5 @@ module.exports = {
   recipe,
   restaurant,
   userExist,
+  userInfo,
 };

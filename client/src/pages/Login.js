@@ -1,7 +1,8 @@
 import React from 'react';
 // import './Login.css';
 
-import { getUserExist } from '../fetcher.js';
+import { getUserExist, getUserInfo } from '../fetcher.js';
+import { useNavigate } from "react-router-dom"
 
 class Login extends React.Component {
   constructor(props) {
@@ -49,12 +50,15 @@ class Login extends React.Component {
   }
 
   checkSubmit() {
-    getUserExist(this.state.email, this.state.password).then(res => {
+   
+    getUserInfo(this.state.email, this.state.password).then(res => {
       const val = Object.keys(res.results).length;
       if (val === 0) {
-        alert('User does not exist');
+        alert('Username and/or password incorrect');
       } else {
-        alert('User exists');
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("userInfo", JSON.stringify(res.results));
+        alert('Login successful')
       }
     })
   }

@@ -11,7 +11,9 @@ const app = express();
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
-app.get('/login/confirm', routes.userExist);
+
+app.get('/login/getInfo', routes.userInfo)
+app.get('/login/confirm', routes.userExist)
 app.get('/searchRecipes', routes.searchGetRecipeRecommendations);
 app.get('/searchRestaurants', routes.searchGetRestaurantRecommendations);
 app.get('/searchPresetRestaurantsRecipePerCity', routes.searchGetBestRestaurantsAndRecipePerCity);
