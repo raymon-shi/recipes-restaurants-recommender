@@ -20,8 +20,8 @@ const get = async (req, res) => {
 };
 
 const userExist = async (req, res) => {
-  const email = req.query.Email;
-  const password = req.query.Password;
+  const email = req.body.email;
+  const password = req.body.password;
 
   connection.query(`SELECT id
         FROM User 
@@ -51,12 +51,9 @@ const getUserCount = async (req, res) => {
 };
 
 const addUser = async (req, res) => {
-  const email = req.query.Email;
-  const password = req.query.Password;
-  const firstName = req.query.FirstName;
-  const lastName = req.query.LastName;
-  const dob = req.query.dob;
-  const id = req.query.id;
+  const { body } = req;
+  const { email, firstName, lastName, password, dob, id } = body;
+  console.log(email);
 
   connection.query(`INSERT INTO User 
         VALUES (${id}, ${firstName}, ${lastName}, ${password}, ${dob}, ${email}, None)`, function (error, results, fields) {

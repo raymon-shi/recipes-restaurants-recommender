@@ -18,8 +18,7 @@ const LoginForm = () => {
   const login = async (event) => {
     event.preventDefault();
     try {
-        const { data } = await axios.get('/login', { params: { email, password } });
-        alert('working');
+        const { data } = await axios.get('/login', { params: { email, password } }).then(() => {alert('working')});
       } catch (error) {
         alert('Error in getting the User!');
       }

@@ -6,13 +6,13 @@ const routes = require('./routes')
 const config = require('./config.json');
 
 const app = express();
-const routes = require('./routes');
+//const routes = require('./routes');
 
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
-app.get('/login', routes.userExist);
-app.get('/signup', routes.addUser);
+app.post('/login', routes.userExist);
+app.post('/signup', routes.addUser);
 app.get('/signup/id', routes.getUserCount);
 app.get('/get', routes.get);
 app.get('/searchRecipes', routes.searchGetRecipeRecommendations);

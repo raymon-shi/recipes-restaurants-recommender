@@ -14,7 +14,7 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [dob, setDOB] = useState('');
-  const [id, setID] = useState();
+  const [id, setID] = useState(0);
 
   const navigate = useNavigate();
 
@@ -29,27 +29,39 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
     };
     // signup route -> login route -> navigate to homepage
     try {
-      const [newid] = await Promise.all([
-        await axios.get('/signup/id',
-        {}, config,).then(() => setID(newid.results)),
-        await axios.get('/signup',
+        const newid = await axios.get('/signup/id');
+        setID(Object.keys(newid.data).length);
+        console.log(id);
+    } catch (error) {
+        alert(`Can't get new ID`)
+    }
+
+    try {
+        const {data} = await axios.post('/signup',
           {
             email,
             firstName,
             lastName,
             password,
             dob,
-            id,
+            id
           },
-          config,
-        ),
-        await axios.get('/login', {
-          email, password,
-        }, config),
-      ]).then(() => navigate('/'));
+        )
+        console.log(data);
     } catch (error) {
-      alert(`Could not sign up`);
+        alert("not working");
     }
+    // try {
+    //   await Promise.all([
+    //     ,
+    //     await axios.post('/login', {
+    //       email, password
+    //     }),
+    //   ]).then(() => {}/*navigate('/')*/);
+    // } catch (error) {
+    //   alert(`Could not sign up`);
+    //   console.log(error);
+    // }
   };
 
   return (
