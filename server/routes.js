@@ -121,8 +121,8 @@ const recipe = async (req, res) => {
         FROM Recipes R
         WHERE R.recipe_id = ${recipeId}
     )
-    SELECT M.recipe_id as ID, totalTime, name, rating, cuisine, ingredient 
-    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id 
+    SELECT M.recipe_id as ID, totalTime, name, rating, cuisine, ingredient, images AS media
+    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id JOIN Images ON Images.recipe_id = M.recipe_id
     `,
       (error, results, fields) => {
         if (error) {
@@ -157,7 +157,6 @@ const restaurant = async (req, res) => {
         if (error) {
           res.json({ error });
         } else if (results) {
-          console.log(results.length);
           res.json({ results });
         }
       },
