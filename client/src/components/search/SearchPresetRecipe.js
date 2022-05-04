@@ -4,15 +4,43 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-const SearchRecipe = () => {
+const SearchPresetRecipe = () => {
   const [recipeRecommendations, setRecipeRecommendations] = useState([]);
-  const { restaurantName, ingredients, rating, prepTime } = useParams();
+  const { preset } = useParams();
 
   const navigate = useNavigate();
 
-  const gettingSearchResults = async () => {
+  const gettingSearchResultsRecipesBestPerCuisine = async () => {
     try {
-      const { data } = await axios.get('/searchRecipes', { params: { restaurantName, ingredients, rating, prepTime } });
+      const { data } = await axios.get('/searchPresetRecipeBestPerCuisine');
+      setRecipeRecommendations(data.results);
+    } catch (error) {
+      alert('There was an error getting recipe recommendations!');
+    }
+  };
+
+  const gettingSearchResultsRecipesBestAboveAverage = async () => {
+    try {
+      const { data } = await axios.get('/searchPresetRecipeBestAboveAverage');
+      setRecipeRecommendations(data.results);
+    } catch (error) {
+      console.log(error);
+      alert('There was an error getting recipe recommendations!');
+    }
+  };
+
+  const gettingSearchResultsRecipesBestHighestRating = async () => {
+    try {
+      const { data } = await axios.get('/searchPresetRecipeBestHighestRating');
+      setRecipeRecommendations(data.results);
+    } catch (error) {
+      alert('There was an error getting recipe recommendations!');
+    }
+  };
+
+  const gettingSearchResultsRecipesBestLowestRating = async () => {
+    try {
+      const { data } = await axios.get('/searchPresetRecipeBestLowestRating');
       setRecipeRecommendations(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
@@ -20,7 +48,18 @@ const SearchRecipe = () => {
   };
 
   useEffect(() => {
-    gettingSearchResults();
+    if (preset === 'Best-Recipes-Per-Cuisine') {
+      gettingSearchResultsRecipesBestPerCuisine();
+    }
+    if (preset === 'Best-Recipes-Above-Average') {
+      gettingSearchResultsRecipesBestAboveAverage();
+    }
+    if (preset === 'Best-Recipes-Highest-Rating') {
+      gettingSearchResultsRecipesBestHighestRating();
+    }
+    if (preset === 'Best-Recipes-Lowest-Rating') {
+      gettingSearchResultsRecipesBestLowestRating();
+    }
   }, []);
 
   const rows = Math.ceil(recipeRecommendations.length / 4);
@@ -29,10 +68,7 @@ const SearchRecipe = () => {
     <>
       <Container>
         <h1>Recipe Recommendations based on: </h1>
-        <h2>{`Name: ${restaurantName}`}</h2>
-        <h2>{`Ingredients: ${ingredients}`}</h2>
-        <h2>{`Minimum Recipe Rating: ${rating} / 5`}</h2>
-        <h2>{`Maximum Preptime: ${prepTime} minutes`}</h2>
+        <h2>{`Preset: ${preset}`}</h2>
         <hr />
         {Array(rows)
           .fill()
@@ -71,4 +107,4 @@ const SearchRecipe = () => {
   );
 };
 
-export default SearchRecipe;
+export default SearchPresetRecipe;
