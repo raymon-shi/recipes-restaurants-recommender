@@ -63,6 +63,7 @@ const searchGetRecipeRecommendations = async (req, res) => {
     `,
       (error, results, fields) => {
         if (error) {
+          console.log(error);
           res.json({ error });
         } else if (results) {
           res.json({ results });
@@ -108,9 +109,66 @@ const searchGetRestaurantRecommendations = async (req, res) => {
   }
 };
 
+const recipe = async (req, res) => {
+  const { query } = req;
+  const { recipeId } = query;
+
+  if (recipeId) {
+    connection.query(
+      `
+    WITH main AS (
+        SELECT *
+        FROM Recipes R
+        WHERE R.recipe_id = ${recipeId}
+    )
+    SELECT M.recipe_id as ID, totalTime, name, rating, cuisine, ingredient 
+    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id 
+    `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({ error });
+        } else if (results) {
+          console.log('test');
+          const a = [];
+          console.log(results.length);
+          console.log(results);
+          res.json({ results });
+        }
+      },
+    );
+  }
+};
+
+const restaurant = async (req, res) => {
+  const { query } = req;
+  const { restaurantId } = query;
+  if (restaurantId) {
+    connection.query(
+      `
+    WITH main AS (
+        SELECT *
+        FROM Restaurants R
+        WHERE R.restaurant_id = ${restaurantId}
+    )
+    SELECT * 
+    FROM main M JOIN Restaurant_Categories RC ON M.restaurant_id = RC.restaurant_id
+    `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({ error });
+        } else if (results) {
+          console.log(results.length);
+          res.json({ results });
+        }
+      },
+    );
+  }
+};
+
 module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
+  recipe,
+  restaurant,
   userExist,
-
 };
