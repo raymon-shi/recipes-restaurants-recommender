@@ -12,17 +12,18 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [dob, setDOB] = useState('');
-  const [id, setID] = useState(0);
+  //const [id, setID] = useState(0);
 
   const navigate = useNavigate();
 
   const signup = async (event) => {
+    var id = 0;
     event.preventDefault();
     console.log(`${email} | ${firstName} ${lastName} | ${password} | ${dob}`);
     try {
       const newid = await axios.get('/signup/id');
-      console.log(newid);
-      setID(Object.keys(newid.data).length);
+      id = Object.values(Object.values(newid.data)[0][0]);
+      //console.log(Object.values(Object.values(newid.data)[0][0]));
       console.log(id);
     } catch (error) {
       alert(`Can't get new ID`);
@@ -37,28 +38,29 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
         dob,
         id,
       });
-      console.log(data);
     } catch (error) {
-      alert('not working');
+      alert('Could not add new User');
     }
-    // try {
-    //   await Promise.all([
-    //     ,
-    //     await axios.post('/login', {
-    //       email, password
-    //     }),
-    //   ]).then(() => {}/*navigate('/')*/);
-    // } catch (error) {
-    //   alert(`Could not sign up`);
-    //   console.log(error);
-    // }
+
+    try {
+      const { data } = await axios.post('/login', {
+        email,
+        password
+      });
+      console.log(data.results.length);
+      if (data.results.length > 0) {
+        navigate('/');
+      }
+    } catch (error) {
+      alert('Could not Login');
+    }
   };
 
   return (
     <main className="Main" /*show={showSignUp} onHide={() => setShowSignUp(false)}*/>
       <Form className="Login-border" id="signup-form" onSubmit={signup}>
         <h1 className="Login-header">Sign Up</h1>
-        <Form.Group className="Login-input" controlId="signUpFormName" style={{ display: 'flex', flexDirection: 'row' }}>
+        <Form.Group className="Login-input" controlId="signUpFormFirstName" style={{ display: 'flex', flexDirection: 'row' }}>
           <Form.Control
             className="Login-text"
             type="text"
@@ -67,6 +69,8 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
             onChange={(e) => setFirstName(e.target.value)}
             required
           />
+        </Form.Group>
+        <Form.Group className="Login-input" controlId="signUpFormLastName" style={{ display: 'flex', flexDirection: 'row' }}>
           <Form.Control
             className="Login-text"
             type="text"
@@ -95,7 +99,7 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
             <Form.Control
               className="Login-text"
               type="text"
-              placeholder="mmddyyyy"
+              placeholder="mm/dd/yyyy"
               value={dob}
               onChange={(e) => setDOB(e.target.value)}
               required></Form.Control>
