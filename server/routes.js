@@ -46,6 +46,28 @@ const userExist = async (req, res) => {
   );
 };
 
+const getUserId = async (req, res) => {
+  const { body } = req;
+  const { email } = body;
+  console.log(email);
+
+  connection.query(
+    `SELECT id
+        FROM User 
+        WHERE email = '${email}'`,
+    function (error, results, fields) {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        console.log(results);
+        res.json({ results });
+      }
+    },
+  );
+};
+
+
+
 const getUserCount = async (req, res) => {
   connection.query(
     `SELECT COUNT(id)
@@ -382,6 +404,51 @@ const restaurant = async (req, res) => {
   }
 };
 
+const ratingRecipe = async (req, res) => {
+  const { body } = req;
+  const { recipeId, userId, rating } = body;
+  console.log(recipeId, userId, rating);
+  if (recipeId) {
+    connection.query(
+      `
+        INSERT INTO Recipe_Ratings
+        VALUES (${userId}, ${recipeId}, ${rating})
+        ON DUPLICATE KEY UPDATE rating=${rating}
+      `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({error});
+        } else if (results) {
+          res.json({results})
+        }
+      }
+    )
+  }
+};
+
+const getAverageUserRating = async (req, res) => {
+  const { body } = req;
+  const { recipeId } = body;
+  if (recipeId) {
+    connection.query(
+      `
+        SELECT AVG(rating) AS average
+        FROM Recipe_Ratings
+        WHERE recipe_id = ${recipeId}
+      `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({error});
+        } else if (results) {
+          res.json({results})
+        }
+      }
+    )
+  }
+};
+
+
+
 module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
@@ -399,4 +466,7 @@ module.exports = {
   getUserCount,
   get,
   logout,
+  ratingRecipe,
+  getUserId,
+  getAverageUserRating,
 };
