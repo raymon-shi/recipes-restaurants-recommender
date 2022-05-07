@@ -3,6 +3,7 @@ import { Form, Button, Container, Modal, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import { getUserInfo} from '../fetcher.js';
 ///import SignInForm from './SignInForm';
 
 const LoginForm = () => {
@@ -19,7 +20,14 @@ const LoginForm = () => {
       const { data } = await axios.post('/login', { email, password });
       if (data.results.length > 0) {
         localStorage.setItem("loggedIn", true);
-        localStorage.setItem("userInfo", JSON.stringify(data.results));
+        getUserInfo(email, password).then(res => {
+          const val = Object.keys(res.results).length;
+          if (val === 0) {
+            alert('Username and/or password incorrect');
+          } else {
+            localStorage.setItem("userInfo", JSON.stringify(res.results));
+          }
+        })
         navigate('/');
       }
     } catch (error) {

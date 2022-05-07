@@ -81,7 +81,11 @@ const NavHeader = () => {
     );
   };
 
-  return <>{loggedIn ? loggedInView() : loggedOutView()}</>;
+  if (localStorage.getItem("loggedIn")) {
+    return loggedInView();
+  } else {
+    return loggedOutView();
+  }
 };
 
 

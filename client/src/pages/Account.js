@@ -1,11 +1,12 @@
 import React from 'react';
 import './Login.css';
 
-import { getUserExist } from '../fetcher.js';
+import { getUserInfo} from '../fetcher.js';
 
 class Account extends React.Component {
     constructor(props) {
       super(props);
+      
       var data = JSON.parse(localStorage.getItem('userInfo'));
     
       this.state = {
