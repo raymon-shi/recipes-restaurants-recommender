@@ -80,18 +80,22 @@ const addUser = async (req, res) => {
   );
 };
 
+
 const searchGetRecipeRecommendations = async (req, res) => {
   const { query } = req;
-  const { restaurantName, rating, prepTime } = query;
+  const { restaurantName, rating, prepTime, ingredients } = query;
 
-  if (restaurantName && rating && prepTime) {
+  const rName = restaurantName === 'all' ? '' : restaurantName;
+  const iList = ingredients === 'all' ? '.*' : ingredients;
+
+  if (restaurantName && rating && prepTime && ingredients) {
     connection.query(
       `
     WITH restID AS (
       SELECT restaurant_id
       FROM Restaurants R
-      WHERE R.name LIKE '%${restaurantName}%'
-      LIMIT 1
+      WHERE R.name LIKE '%${rName}%' OR R.name NOT LIKE '%%'
+      LIMIT 500
     ),
     restCategories AS (
     SELECT RC.category
@@ -102,15 +106,19 @@ const searchGetRecipeRecommendations = async (req, res) => {
         FROM Cuisines RC JOIN restCategories RTC ON RC.cuisine LIKE CONCAT('%', RTC.category, '%')
     ),
     recipeRecommendations AS (
-      SELECT R.recipe_id as recipe_id, R.totalTime as totalTime, R.name as recipeName, R.rating AS recipeRating
-      FROM recipeWithSameCuisine RWSC JOIN Recipes R ON RWSC.recipe_id = R.recipe_id
-      WHERE R.totalTime <= ${parseInt(prepTime, 10)} AND R.rating >= ${parseInt(rating, 10)}
+      SELECT R.recipe_id as recipe_id, R.totalTime as totalTime, R.name as recipeName, R.rating AS recipeRating, I.ingredient as ingredient
+      FROM recipeWithSameCuisine RWSC 
+        JOIN Recipes R ON RWSC.recipe_id = R.recipe_id
+        JOIN Ingredients I on R.recipe_id = I.recipe_id
+      WHERE R.totalTime <= ${parseInt(prepTime, 10)} AND R.rating >= ${parseInt(rating, 10)} AND I.ingredient REGEXP '${iList}'
     )
-    SELECT RR.recipe_id AS recipe_id, RR.recipeName AS recipeName, RR.totalTime AS totalTime, RR.recipeRating as recipeRating, I.images AS imageLink
+    SELECT DISTINCT RR.recipe_id AS recipe_id, RR.recipeName AS recipeName, RR.totalTime AS totalTime, RR.recipeRating as recipeRating, I.images AS imageLink
     FROM Images I JOIN recipeRecommendations RR ON I.recipe_id = RR.recipe_id
+    LIMIT 500
     `,
       (error, results, fields) => {
         if (error) {
+          console.log(error);
           res.json({ error });
         } else if (results) {
           res.json({ results });
@@ -122,7 +130,10 @@ const searchGetRecipeRecommendations = async (req, res) => {
 
 const searchGetRestaurantRecommendations = async (req, res) => {
   const { query } = req;
-  const { recipeName, starRating, reviewCount } = query;
+  const { recipeName, state, starRating, reviewCount } = query;
+
+  const rName = recipeName === 'all' ? '' : recipeName;
+  const sName = state === 'all' ? '' : state;
 
   if (recipeName && starRating && reviewCount) {
     connection.query(
@@ -130,7 +141,7 @@ const searchGetRestaurantRecommendations = async (req, res) => {
     WITH recipeID AS (
         SELECT recipe_id
         FROM Recipes R
-        WHERE R.name LIKE '%${recipeName}%'
+        WHERE R.name LIKE '%${rName}%' OR R.name NOT LIKE '%%'
     ),
     recipeCuisines AS (
         SELECT DISTINCT C.cuisine
@@ -142,13 +153,228 @@ const searchGetRestaurantRecommendations = async (req, res) => {
     )
     SELECT DISTINCT R.restaurant_id, R.name, R.address, R.city, R.state, R.rating, R.review_count, RC.category
     FROM restCategories RC JOIN Restaurants R ON RC.restaurant_id = R.restaurant_id
-    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(reviewCount, 10)}
+    WHERE RC.category != 'Food' AND R.rating >= ${parseInt(starRating, 10)} AND R.review_count >= ${parseInt(
+        reviewCount,
+        10,
+      )} AND R.state LIKE '%${sName}%' OR R.state NOT LIKE '%%'
+    ORDER BY R.name
+    LIMIT 500
     `,
       (error, results, fields) => {
         if (error) {
           res.json({ error });
         } else if (results) {
+          res.json({ results });
+        }
+      },
+    );
+  }
+};
+
+const searchGetBestRestaurantsAndRecipePerCity = async (req, res) => {
+  connection.query(
+    `
+      WITH bestRest AS (
+        SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+        FROM Restaurants R
+        GROUP BY city
+        HAVING MAX(R.rating)
+    ),
+         bestRec AS (
+            SELECT R.recipe_id, R.name, C.cuisine, R.totalTime
+            FROM Recipes R JOIN Cuisines C ON R.recipe_id = C.recipe_id
+            GROUP BY C.cuisine HAVING MAX(R.rating)
+         ),
+         bestRestC AS (
+            SELECT bestRest.restaurant_id , bestRest.name, bestRest.city, RC.Category, bestRest.address AS address, bestRest.state AS state, bestRest.rating AS rating, bestRest.review_count AS review_count
+            FROM bestRest JOIN Restaurant_Categories RC ON bestRest.restaurant_id = RC.restaurant_id
+         )
+      SELECT DISTINCT bestRestC.restaurant_id AS restaurant_id, bestRestC.name AS name, bestRestC.city AS city, bestRec.name AS recipe_name, bestRec.cuisine AS cuisine, bestRestC.address AS address, bestRestC.state AS state, bestRestC.rating AS rating, bestRestC.review_count AS review_count
+      FROM bestRestC JOIN bestRec ON bestRestC.category LIKE CONCAT('%', bestRec.cuisine, '%')
+      WHERE bestRec.totalTime <= 60
+      ORDER BY bestRestC.city
+      LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRestaurantsPerCity = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+    FROM Restaurants R
+    GROUP BY city
+    HAVING MAX(R.rating)
+    ORDER BY R.city
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRestaurantsPerState = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.restaurant_id, R.name, R.city, R.address, R.state, R.rating, R.review_count
+    FROM Restaurants R
+    GROUP BY state
+    HAVING MAX(R.rating)
+    ORDER BY R.state
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipePerCuisine = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, C.cuisine AS cuisine, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+        JOIN Cuisines C on R.recipe_id = C.recipe_id
+    GROUP BY C.cuisine
+    HAVING MAX(R.rating)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeAboveAverage = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating >= (SELECT FLOOR(AVG(R.rating)) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeHighestRating = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating >= (SELECT MAX(R.rating) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const searchGetBestRecipeLowestRating = async (req, res) => {
+  connection.query(
+    `
+    SELECT R.recipe_id AS recipe_id, R.name AS recipeName, R.rating AS recipeRating, R.totalTime AS totalTime, I.images AS imageLink
+    FROM Recipes R
+        JOIN Images I on R.recipe_id = I.recipe_id
+    WHERE R.rating = (SELECT MIN(R.rating) FROM Recipes R)
+    ORDER BY R.name
+    LIMIT 500
+      `,
+    (error, results, fields) => {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        res.json({ results });
+      }
+    },
+  );
+};
+
+const recipe = async (req, res) => {
+  const { query } = req;
+  const { recipeId } = query;
+
+  if (recipeId) {
+    connection.query(
+      `
+    WITH main AS (
+        SELECT *
+        FROM Recipes R
+        WHERE R.recipe_id = ${recipeId}
+    )
+    SELECT M.recipe_id as ID, totalTime, name, rating, cuisine, ingredient, images AS media
+    FROM main M JOIN Cuisines C on C.recipe_id = M.recipe_id JOIN Ingredients ON M.recipe_id = Ingredients.recipe_id JOIN Images ON Images.recipe_id = M.recipe_id
+    `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({ error });
+        } else if (results) {
+          console.log('test');
+          const a = [];
           console.log(results.length);
+          console.log(results);
+          res.json({ results });
+        }
+      },
+    );
+  }
+};
+
+const restaurant = async (req, res) => {
+  const { query } = req;
+  const { restaurantId } = query;
+  if (restaurantId) {
+    connection.query(
+      `
+    WITH main AS (
+        SELECT *
+        FROM Restaurants R
+        WHERE R.restaurant_id = ${restaurantId}
+    )
+    SELECT * 
+    FROM main M JOIN Restaurant_Categories RC ON M.restaurant_id = RC.restaurant_id
+    `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({ error });
+        } else if (results) {
           res.json({ results });
         }
       },
@@ -159,6 +385,15 @@ const searchGetRestaurantRecommendations = async (req, res) => {
 module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
+  searchGetBestRestaurantsAndRecipePerCity,
+  searchGetBestRestaurantsPerCity,
+  searchGetBestRestaurantsPerState,
+  searchGetBestRecipePerCuisine,
+  searchGetBestRecipeAboveAverage,
+  searchGetBestRecipeHighestRating,
+  searchGetBestRecipeLowestRating,
+  recipe,
+  restaurant,
   userExist,
   addUser,
   getUserCount,

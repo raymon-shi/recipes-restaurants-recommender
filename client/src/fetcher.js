@@ -7,6 +7,3 @@ import config from './config.json';
 //     return res.json()
 // }
 
-export {
-    getUserExist
-}
