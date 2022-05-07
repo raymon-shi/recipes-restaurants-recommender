@@ -18,6 +18,8 @@ const LoginForm = () => {
     try {
       const { data } = await axios.post('/login', { email, password });
       if (data.results.length > 0) {
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("userInfo", JSON.stringify(data.results));
         navigate('/');
       }
     } catch (error) {

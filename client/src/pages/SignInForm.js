@@ -49,6 +49,8 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
       });
       console.log(data.results.length);
       if (data.results.length > 0) {
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("userInfo", JSON.stringify(data.results));
         navigate('/');
       }
     } catch (error) {
