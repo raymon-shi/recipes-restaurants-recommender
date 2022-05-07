@@ -38,6 +38,9 @@ app.get('/searchPresetRecipeBestHighestRating', routes.searchGetBestRecipeHighes
 app.get('/searchPresetRecipeBestLowestRating', routes.searchGetBestRecipeLowestRating);
 app.get('/recipe', routes.recipe);
 app.get('/restaurant', routes.restaurant);
+app.post('/getUserId', routes.getUserId);
+app.post('/ratingRecipe', routes.ratingRecipe)
+app.post('/getAverageUserRating', routes.getAverageUserRating)
 
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
