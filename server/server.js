@@ -10,8 +10,12 @@ const app = express();
 // const routes = require('./routes');
 
 // whitelist localhost 3000
+app.use(express.json())
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 app.use(express.json());
+
+
+
 
 app.use(
   cookieSession({
@@ -27,6 +31,10 @@ app.post('/logout', routes.logout);
 app.get('/signup/id', routes.getUserCount);
 app.get('/get', routes.get);
 app.get('/login/confirm', routes.userExist);
+app.get('/getSaved', routes.getSaved);
+app.get('/login/getInfo', routes.userInfo)
+app.get('/login/confirm', routes.userExist)
+
 app.get('/searchRecipes', routes.searchGetRecipeRecommendations);
 app.get('/searchRestaurants', routes.searchGetRestaurantRecommendations);
 app.get('/searchPresetRestaurantsRecipePerCity', routes.searchGetBestRestaurantsAndRecipePerCity);
@@ -41,6 +49,8 @@ app.get('/restaurant', routes.restaurant);
 app.post('/getUserId', routes.getUserId);
 app.post('/ratingRecipe', routes.ratingRecipe)
 app.post('/getAverageUserRating', routes.getAverageUserRating)
+
+app.post('/toSave', routes.saveRecipe);
 
 app.listen(config.server_port, () => {
   console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
