@@ -82,6 +82,7 @@ const SearchPresetRecipe = () => {
                       <Card.Title>{result.recipeName}</Card.Title>
                       <Card.Text>Rating: {result.recipeRating}</Card.Text>
                       <Card.Text>Prep Time: {result.totalTime}</Card.Text>
+                      {preset === 'Best-Recipes-Per-Cuisine' ? <Card.Text>Cuisine: {result.cuisine}</Card.Text> : null}
                       <Button variant="primary" onClick={() => navigate(`/recipe/${result.recipe_id}`)}>
                         Check out this recipe!
                       </Button>
