@@ -103,6 +103,57 @@ const addUser = async (req, res) => {
 };
 
 
+async function userInfo(req, res) {
+  const email = req.query.Email;
+  const password = req.query.Password;
+
+  connection.query(`SELECT id, first_name, last_name, DOB, email, preferences
+        FROM User 
+        WHERE email = '${email}' AND password = '${password}'`, function (error, results, fields) {
+
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        });
+}
+
+async function getSaved(req, res) {
+  const userID = req.query.userID;
+
+  connection.query(` SELECT UR.recipe_id AS recipe_id, R.name AS recipeName, R.totalTime AS totalTime, R.rating as recipeRating, I.images AS imageLink
+        FROM User_Recipes UR
+          JOIN Recipes R ON UR.recipe_id = R.recipe_id
+          JOIN Images I ON R.recipe_id = I.recipe_id
+        WHERE user_id = ${userID} `, function (error, results, fields) {
+
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        });
+}
+
+const saveRecipe  = async (req, res) => {
+  const { body } = req;
+  const { userID, recipeID} = body;
+
+  connection.query(`INSERT INTO User_Recipes
+        VALUES(${userID}, ${recipeID})`, function (error, results, fields) {
+
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        });
+};
+
 const searchGetRecipeRecommendations = async (req, res) => {
   const { query } = req;
   const { restaurantName, rating, prepTime, ingredients } = query;
@@ -462,6 +513,9 @@ module.exports = {
   recipe,
   restaurant,
   userExist,
+  userInfo,
+  saveRecipe,
+  getSaved,
   addUser,
   getUserCount,
   get,
@@ -469,4 +523,5 @@ module.exports = {
   ratingRecipe,
   getUserId,
   getAverageUserRating,
+
 };

@@ -33,5 +33,10 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "jest": "^27.1.0"
+  },
+  "proxy": {
+    "/auth/google": {
+      "target": "http://127.0.0.1:8080"
+    }
   }
 }

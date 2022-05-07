@@ -3,12 +3,22 @@ import { Card, Container, Row, Col, Button, Pagination } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { toSaveRecipe } from '../../fetcher.js';
 
 const SearchRecipe = () => {
   const [recipeRecommendations, setRecipeRecommendations] = useState([]);
   const { restaurantName, ingredients, rating, prepTime } = useParams();
 
   const navigate = useNavigate();
+
+  var userData = JSON.parse(localStorage.getItem('userInfo'));
+  var userID;
+  if (localStorage.getItem("loggedIn")) {
+    userID = userData[0]["id"];
+  } else {
+    userID = -1;
+  }
+  
 
   const gettingSearchResults = async () => {
     try {
@@ -22,6 +32,26 @@ const SearchRecipe = () => {
   useEffect(() => {
     gettingSearchResults();
   }, []);
+
+const toSave = async (recipeID) => {
+    console.log(userID);
+    console.log(recipeID);
+    try {
+      if (userID < 0) throw "logged out";
+      await axios.post('/toSave', {
+        userID: userID, 
+        recipeID: recipeID
+      })
+      .then((response) => {
+        console.log(response);
+      });
+    } catch (error) {
+      console.log(error);
+      alert('Must be logged in to save recipes');
+    }
+  };
+  
+
 
   const rows = Math.ceil(recipeRecommendations.length / 4);
 
@@ -49,7 +79,7 @@ const SearchRecipe = () => {
                       <Button variant="primary" onClick={() => navigate(`/recipe/${result.recipe_id}`)}>
                         Check out this recipe!
                       </Button>
-                      <Button variant="success">Save this recipe!</Button>
+                      <Button variant="success" onClick={() => toSave(result.recipe_id)}>Save this recipe!</Button>
                     </Card.Body>
                   </Card>
                 </Col>
