@@ -9,6 +9,7 @@ class Account extends React.Component {
       var data = JSON.parse(localStorage.getItem('userInfo'));
     
       this.state = {
+        id: data[0]["id"],
         email: data[0]["email"],
         firstName: data[0]["first_name"],
         lastName: data[0]["last_name"],

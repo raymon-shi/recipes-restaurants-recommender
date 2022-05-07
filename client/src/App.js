@@ -14,6 +14,7 @@ import { Container } from 'react-bootstrap';
 import SearchPresetRestaurant from './components/search/SearchPresetRestaurant'
 import SearchPresetRecipe from './components/search/SearchPresetRecipe'
 import RestaurantResult from './components/restaurant/restaurant';
+import SavedRecipes from './pages/SavedRecipes';
 
 const App = () => {
   const [state, setState] = useState('');
@@ -36,6 +37,7 @@ const App = () => {
           <Route exact path='/restaurant/:restaurantId' element={<RestaurantResult />}/>
           <Route exact path='/account' element={<Account />} />
           <Route exact path='/blogs' element={<Blogs />} />
+          <Route exact path='/saved' element={<SavedRecipes />} />
 
         </Routes>
       </BrowserRouter>
