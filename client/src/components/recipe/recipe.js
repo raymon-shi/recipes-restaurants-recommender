@@ -74,28 +74,34 @@ const RecipeResult = () => {
     return (
       <div className="item-container">
         <div className="item-col">
-          <h1 style={{ alignSelf:'center' }}>{`${name} (${userAverage})`}</h1>
-          <img style={{ alignSelf:'center' }} className="item-image" src={media} alt="product" />
-          <p className="item-text">Recipe ID: {id}</p>
-          <p className="item-text">Rating: {rating}</p>
-          <p className="item-text">Total Time: {time}</p>
-          <p className="item-text">Cuisine: {cuisine}</p>
-          <p className="item-text">Ingredients: {ingredients}</p>
+          <h1 style={{ textAlign:'center' }}>{`${name} (Average User Rating: ${userAverage})`}</h1>
+          <div style={{ marginLeft: '40px' }}>
+            <div style={{ alignContent:'center', justifyContent:'left', display:'flex' }}>
+              <img className="item-image" src={media} alt="product" style={{ marginBottom: '20px' }} />
+              <div style={{ marginLeft:"10px" }}>
+                <p className="item-text">Recipe ID: {id}</p>
+                <p className="item-text">Yelp Rating: {rating}</p>
+                <p className="item-text">Total Time: {time}</p>
+                <p className="item-text">Cuisine: {cuisine}</p>
+              </div>
+            </div>
+            <p className="item-text">Ingredients: {ingredients}</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            } }>
+              <select w="40" variant="filled" onChange={(e) => setUserRating(e.target.value)}>
+                <option value="">Ratings</option>
+                <option label="1" value="1" />
+                <option label="2" value="2" />
+                <option label="3" value="3" />
+                <option label="4" value="4" />
+                <option label="5" value="5" />
+              </select>
+              <button style={{ marginLeft:"10px" }}type="submit" name="ratingSubmit">Rate Recipe</button>
+            </form>
+          </div>
         </div>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        } }>
-          <select w="40" variant="filled" onChange={(e) => setUserRating(e.target.value)}>
-            <option value="">Ratings</option>
-            <option label="1" value="1" />
-            <option label="2" value="2" />
-            <option label="3" value="3" />
-            <option label="4" value="4" />
-            <option label="5" value="5" />
-          </select>
-          <button type="submit" name="ratingSubmit">Rate Recipe</button>
-        </form>
       </div>
     );
 };
