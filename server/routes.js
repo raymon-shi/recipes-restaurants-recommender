@@ -11,13 +11,23 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const exampleFunction = async () => {
-  console.log('hello world');
+const get = async (req, res) => {
+  console.log('top');
+  console.log(req.session.email + ' ' + ' /getmethod');
+  res.send({ email: req.session.email });
 };
 
-async function userExist(req, res) {
-  const email = req.query.Email;
-  const password = req.query.Password;
+const logout = async (req, res) => {
+  console.log('HELLLO');
+  req.session.email = undefined;
+  console.log(req.session.email);
+  res.send(req.session.email);
+};
+
+const userExist = async (req, res) => {
+  const { body } = req;
+  const { email } = body;
+  const { password } = body;
 
   connection.query(
     `SELECT id
@@ -28,11 +38,48 @@ async function userExist(req, res) {
         console.log(error);
         res.json({ error: error });
       } else if (results) {
+        console.log(results);
+        req.session.email = email;
         res.json({ results: results });
       }
     },
   );
-}
+};
+
+const getUserCount = async (req, res) => {
+  connection.query(
+    `SELECT COUNT(id)
+        FROM User`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
+};
+
+const addUser = async (req, res) => {
+  const { body } = req;
+  const { email, firstName, lastName, password, dob, id } = body;
+  const preferences = 'None';
+  console.log(`${typeof email} | ${firstName} | ${lastName} | ${password} | ${dob} | ${id}`);
+
+  connection.query(
+    `INSERT INTO User VALUES (${id}, '${firstName}', '${lastName}', '${password}', '${dob}', '${email}', '${preferences}');`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
+};
+
 
 const searchGetRecipeRecommendations = async (req, res) => {
   const { query } = req;
@@ -348,4 +395,8 @@ module.exports = {
   recipe,
   restaurant,
   userExist,
+  addUser,
+  getUserCount,
+  get,
+  logout,
 };
