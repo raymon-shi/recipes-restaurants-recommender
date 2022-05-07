@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 const RestaurantResult = () => {
     const [restaurant, setRestaurant] = useState([]);
     const { restaurantId } = useParams();
-    var categoryList = [];
+    const categoryList = [];
     const [categories, setCategories] = useState('');
     const [id, setId] = useState('');
     const [name, setName] = useState('');
@@ -53,7 +53,7 @@ const RestaurantResult = () => {
           <p className="item-text">Review Count: {review}</p>
           <p className="item-text">Categories: {categories}</p>
         </div>
-    </div>
+      </div>
     );
 
 };

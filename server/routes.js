@@ -11,13 +11,23 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const exampleFunction = async () => {
-  console.log('hello world');
+const get = async (req, res) => {
+  console.log('top');
+  console.log(req.session.email + ' ' + ' /getmethod');
+  res.send({ email: req.session.email });
 };
 
-async function userExist(req, res) {
-  const email = req.query.Email;
-  const password = req.query.Password;
+const logout = async (req, res) => {
+  console.log('HELLLO');
+  req.session.email = undefined;
+  console.log(req.session.email);
+  res.send(req.session.email);
+};
+
+const userExist = async (req, res) => {
+  const { body } = req;
+  const { email } = body;
+  const { password } = body;
 
   connection.query(
     `SELECT id
@@ -28,11 +38,70 @@ async function userExist(req, res) {
         console.log(error);
         res.json({ error: error });
       } else if (results) {
+        console.log(results);
+        req.session.email = email;
         res.json({ results: results });
       }
     },
   );
-}
+};
+
+const getUserId = async (req, res) => {
+  const { body } = req;
+  const { email } = body;
+  console.log(email);
+
+  connection.query(
+    `SELECT id
+        FROM User 
+        WHERE email = '${email}'`,
+    function (error, results, fields) {
+      if (error) {
+        res.json({ error });
+      } else if (results) {
+        console.log(results);
+        res.json({ results });
+      }
+    },
+  );
+};
+
+
+
+const getUserCount = async (req, res) => {
+  connection.query(
+    `SELECT COUNT(id)
+        FROM User`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
+};
+
+const addUser = async (req, res) => {
+  const { body } = req;
+  const { email, firstName, lastName, password, dob, id } = body;
+  const preferences = 'None';
+  console.log(`${typeof email} | ${firstName} | ${lastName} | ${password} | ${dob} | ${id}`);
+
+  connection.query(
+    `INSERT INTO User VALUES (${id}, '${firstName}', '${lastName}', '${password}', '${dob}', '${email}', '${preferences}');`,
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.json({ error: error });
+      } else if (results) {
+        res.json({ results: results });
+      }
+    },
+  );
+};
+
 
 async function userInfo(req, res) {
   const email = req.query.Email;
@@ -386,6 +455,51 @@ const restaurant = async (req, res) => {
   }
 };
 
+const ratingRecipe = async (req, res) => {
+  const { body } = req;
+  const { recipeId, userId, rating } = body;
+  console.log(recipeId, userId, rating);
+  if (recipeId) {
+    connection.query(
+      `
+        INSERT INTO Recipe_Ratings
+        VALUES (${userId}, ${recipeId}, ${rating})
+        ON DUPLICATE KEY UPDATE rating=${rating}
+      `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({error});
+        } else if (results) {
+          res.json({results})
+        }
+      }
+    )
+  }
+};
+
+const getAverageUserRating = async (req, res) => {
+  const { body } = req;
+  const { recipeId } = body;
+  if (recipeId) {
+    connection.query(
+      `
+        SELECT AVG(rating) AS average
+        FROM Recipe_Ratings
+        WHERE recipe_id = ${recipeId}
+      `,
+      (error, results, fields) => {
+        if (error) {
+          res.json({error});
+        } else if (results) {
+          res.json({results})
+        }
+      }
+    )
+  }
+};
+
+
+
 module.exports = {
   searchGetRecipeRecommendations,
   searchGetRestaurantRecommendations,
@@ -402,4 +516,12 @@ module.exports = {
   userInfo,
   saveRecipe,
   getSaved,
+  addUser,
+  getUserCount,
+  get,
+  logout,
+  ratingRecipe,
+  getUserId,
+  getAverageUserRating,
+
 };

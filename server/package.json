@@ -14,6 +14,7 @@
     "@jest/globals": "^27.5.1",
     "@types/eslint": "^6.1.1",
     "babel-eslint": "^10.1.0",
+    "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "eslint-config-airbnb": "^18.2.0",
     "express": "^4.17.1",
