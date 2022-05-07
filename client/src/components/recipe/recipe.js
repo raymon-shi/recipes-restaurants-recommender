@@ -6,10 +6,12 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
 const RecipeResult = () => {
-    const [recipe, setRecipe] = useState([]);
-    const ingredientsList = [];
+    
     const { recipeId } = useParams();
-    const [ingredients, setIngredients] = useState('');
+    const ingredientsList = new Set();
+    const [ingredients, setIngredients] = useState([]);
+    const cuisineList = new Set();
+    const [cuisines, setCuisines] = useState([]);
     const [id, setId] = useState('');
     const [name, setName] = useState('');
     const [rating, setRating] = useState('');
@@ -48,19 +50,21 @@ const RecipeResult = () => {
     const gettingSearchResults = async () => {
       try {
         const { data } = await axios.get('/recipe', { params: { recipeId } });
-        setRecipe(data.results);
         setId(data.results[0].ID);
         setRating(data.results[0].rating);
         setTime(data.results[0].totalTime);
-        setCuisine(data.results[0].cuisine);
         setName(data.results[0].name);
         setMedia(data.results[0].media);
 
         for (let i = 0; i < data.results.length; i++) {
-          ingredientsList.push(data.results[i].ingredient);
+          ingredientsList.add(data.results[i].ingredient);
+          cuisineList.add(data.results[i].cuisine);
         }
-        const ingredients1 = ingredientsList.join(", ");
+        const ingredients1 = Array.from(ingredientsList).join(", ");
         setIngredients(ingredients1);
+        const cuisines1 = Array.from(cuisineList).join(", ");
+        setCuisine(cuisines1);
+
 
       } catch (error) {
         alert('There was an error getting the recipe!');
@@ -74,18 +78,25 @@ const RecipeResult = () => {
     return (
       <div className="item-container">
         <div className="item-col">
-          <h1 style={{ textAlign:'center' }}>{`${name} (Average User Rating: ${userAverage})`}</h1>
+          {userAverage ? (
+            <h1 style={{ textAlign:'center' }}>{`${name} (Average User Rating: ${userAverage})`}</h1>
+          )
+            : (
+              <h1 style={{ textAlign:'center' }}>{`${name} (No User Ratings Yet)`}</h1>
+            )}
           <div style={{ marginLeft: '40px' }}>
-            <div style={{ alignContent:'center', justifyContent:'left', display:'flex' }}>
+            <div style={{ display:'flex' }}>
               <img className="item-image" src={media} alt="product" style={{ marginBottom: '20px' }} />
               <div style={{ marginLeft:"10px" }}>
-                <p className="item-text">Recipe ID: {id}</p>
-                <p className="item-text">Yelp Rating: {rating}</p>
-                <p className="item-text">Total Time: {time}</p>
-                <p className="item-text">Cuisine: {cuisine}</p>
+                <p style={{ lineHeight:'35px' }}className="item-text">
+                  <strong>Recipe ID: </strong>{id}
+                  <br/><strong>Yelp Rating: </strong>{rating}
+                  <br/><strong>Total Time: </strong>{time}
+                  <br/><strong>Cuisine: </strong>{cuisine}
+                  </p>
               </div>
             </div>
-            <p className="item-text">Ingredients: {ingredients}</p>
+            <p style={{ maxWidth:'800px' }}className="item-text"><strong>Ingredients: </strong> {ingredients}</p>
             <form onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();

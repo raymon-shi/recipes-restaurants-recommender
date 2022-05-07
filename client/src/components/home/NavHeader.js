@@ -38,7 +38,7 @@ const NavHeader = () => {
     return (
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href='#home'>Yelp-Recommender</Navbar.Brand>
+          <Navbar.Brand href='/'>Yelp-Recommender</Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='me-auto'>
