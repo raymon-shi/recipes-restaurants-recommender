@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Modal, Alert } from 'react-bootstrap';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { getUserInfo } from '../fetcher.js';
-///import SignInForm from './SignInForm';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const [showSignIn, setShowSignIn] = useState(false);
 
   const navigate = useNavigate();
 
-  // login route
   const login = async (event) => {
     event.preventDefault();
     try {

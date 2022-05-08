@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Button, Modal, Alert } from 'react-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-//import { data } from '../data/index';
 
-const SignInForm = ({ showSignIn, setShowSignIn }) => {
+const SignInForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [dob, setDOB] = useState('');
-  //const [id, setID] = useState(0);
 
   const navigate = useNavigate();
 
   const signup = async (event) => {
-    var id = 0;
+    let id = 0;
     event.preventDefault();
     console.log(`${email} | ${firstName} ${lastName} | ${password} | ${dob}`);
     try {
       const newid = await axios.get('/signup/id');
       id = Object.values(Object.values(newid.data)[0][0]);
-      //console.log(Object.values(Object.values(newid.data)[0][0]));
       console.log(id);
     } catch (error) {
       alert(`Can't get new ID`);
@@ -60,7 +56,7 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
   };
 
   return (
-    <main className="Main" /*show={showSignUp} onHide={() => setShowSignUp(false)}*/>
+    <main className="Main" /**/>
       <Form className="Login-border" id="signup-form" onSubmit={signup}>
         <h1 className="Login-header">Sign Up</h1>
         <Form.Group className="Login-input" controlId="signUpFormFirstName" style={{ display: 'flex', flexDirection: 'row' }}>

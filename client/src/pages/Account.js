@@ -1,8 +1,6 @@
 import React from 'react';
 import './Login.css';
 
-import { getUserInfo } from '../fetcher.js';
-
 class Account extends React.Component {
   constructor(props) {
     super(props);

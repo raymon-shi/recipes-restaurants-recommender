@@ -15,7 +15,6 @@ import SearchRecipe from './components/search/SearchRecipe';
 import SearchRestaurant from './components/search/SearchRestaurant';
 import RecipeResult from './components/recipe/recipe';
 import { Container } from 'react-bootstrap';
-import axios from 'axios';
 import SearchPresetRestaurant from './components/search/SearchPresetRestaurant';
 import SearchPresetRecipe from './components/search/SearchPresetRecipe';
 import RestaurantResult from './components/restaurant/restaurant';
@@ -33,7 +32,6 @@ const App = () => {
           {/* localhost:3000/login will be the route for login */}
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<SignInForm />} />
-
           <Route exact path="/searchRecipe/:restaurantName/:ingredients/:rating/:prepTime" element={<SearchRecipe />} />
           <Route exact path="/searchRestaurant/:recipeName/:state/:starRating/:reviewCount" element={<SearchRestaurant />} />
           <Route exact path="/searchPresetRestaurant/:preset" element={<SearchPresetRestaurant />} />

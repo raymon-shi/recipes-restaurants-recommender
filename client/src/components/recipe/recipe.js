@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Select } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -8,7 +7,6 @@ const RecipeResult = () => {
   const ingredientsList = new Set();
   const [ingredients, setIngredients] = useState([]);
   const cuisineList = new Set();
-  const [cuisines, setCuisines] = useState([]);
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [rating, setRating] = useState('');
@@ -35,23 +33,6 @@ const RecipeResult = () => {
     }, 5000);
     return () => clearInterval(intervalID);
   }, []);
-
-  // const gettingUserId = async () => {
-  //   try {
-  //     const emailData = await axios.get('/get');
-  //     const { data } = emailData;
-  //     const { email } = data;
-  //     const user = await axios.post('/getUserId', { email });
-  //     setUserID(user.data.results[0].id);
-  //   } catch (error) {
-  //     console.log(error);
-  //     alert('there was an error getting userId');
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   gettingUserId();
-  // }, []);
 
   const handleSubmit = async () => {
     try {

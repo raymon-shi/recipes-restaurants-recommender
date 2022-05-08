@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Row, Col, Button, Pagination } from 'react-bootstrap';
+import { Card, Container, Row, Col, Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -57,15 +57,6 @@ const SearchRestaurant = () => {
             </Row>
           ))}
         <hr />
-        {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Pagination>
-            <Pagination.First />
-            <Pagination.Prev />
-            {items}
-            <Pagination.Next />
-            <Pagination.Last />
-          </Pagination>
-        </div> */}
       </Container>
     </>
   );

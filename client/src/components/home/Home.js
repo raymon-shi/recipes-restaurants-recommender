@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Col, Container, Form, Row, Tab, Tabs } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import NavHeader from './NavHeader';
+import { Button, Container, Form, Tab, Tabs } from 'react-bootstrap';
+import {  useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const Home = () => {
@@ -171,7 +170,6 @@ const Home = () => {
             <Button
               variant="primary"
               type="submit"
-              // disabled={!recipeRestaurantName || !recipeRating || !recipePrepTime}
               onClick={() => navigate(`/searchRecipe/${recipeRestaurantName}/${ingredients}/${recipeRating}/${recipePrepTime}`)}>
               Get Recipe Recommendations!
             </Button>
@@ -261,7 +259,6 @@ const Home = () => {
             <Button
               variant="primary"
               type="submit"
-              // disabled={!restaurantRecipeName || !restaurantRating || !restaurantReviewCount}
               onClick={() => navigate(`/searchRestaurant/${restaurantRecipeName}/${currState}/${restaurantRating}/${restaurantReviewCount}`)}>
               Get Restaurant Recommendations!
             </Button>

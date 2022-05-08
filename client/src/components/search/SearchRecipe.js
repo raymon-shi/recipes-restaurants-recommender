@@ -3,7 +3,6 @@ import { Card, Container, Row, Col, Button, Pagination } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { toSaveRecipe } from '../../fetcher.js';
 
 const SearchRecipe = () => {
   const [recipeRecommendations, setRecipeRecommendations] = useState([]);
@@ -51,8 +50,6 @@ const toSave = async (recipeID) => {
       alert('Must be logged in to save recipes');
     }
   };
-  
-
 
   const rows = Math.ceil(recipeRecommendations.length / 4);
 
@@ -88,15 +85,6 @@ const toSave = async (recipeID) => {
             </Row>
           ))}
         <hr />
-        {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Pagination>
-            <Pagination.First />
-            <Pagination.Prev />
-            {items}
-            <Pagination.Next />
-            <Pagination.Last />
-          </Pagination>
-        </div> */}
       </Container>
     </>
   );
