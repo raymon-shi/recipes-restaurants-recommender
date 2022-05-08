@@ -20,7 +20,9 @@ const LoginForm = () => {
       const { data } = await axios.post('/login', { email, password });
       if (data.results.length > 0) {
         localStorage.setItem('loggedIn', true);
-        getUserInfo(email, password).then((res) => {
+        console.log('here');
+        await getUserInfo(email, password).then((res) => {
+          console.log(res);
           const val = Object.keys(res.results).length;
           console.log(res.results);
           if (val === 0) {
@@ -29,6 +31,7 @@ const LoginForm = () => {
             localStorage.setItem('userInfo', JSON.stringify(res.results));
           }
         });
+        console.log('after');
         navigate('/');
         window.location.reload(true);
       }
