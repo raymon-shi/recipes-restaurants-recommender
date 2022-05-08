@@ -60,6 +60,7 @@ const RecipeResult = () => {
       const { email } = data;
 
       const user = await axios.post('/getUserId', { email });
+      setUserID(user.data.results[0].id);
       const ratingRecipe = await axios.post('/ratingRecipe', { recipeId, userId: user.data.results[0].id, rating: userRating });
       alert('The recipe rating has been updated!');
     } catch (error) {
