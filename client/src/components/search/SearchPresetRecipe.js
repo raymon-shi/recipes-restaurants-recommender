@@ -10,6 +10,14 @@ const SearchPresetRecipe = () => {
 
   const navigate = useNavigate();
 
+  var userData = JSON.parse(localStorage.getItem('userInfo'));
+  var userID;
+  if (localStorage.getItem("loggedIn")) {
+    userID = userData[0]["id"];
+  } else {
+    userID = -1;
+  }
+
   const gettingSearchResultsRecipesBestPerCuisine = async () => {
     try {
       const { data } = await axios.get('/searchPresetRecipeBestPerCuisine');
@@ -44,6 +52,25 @@ const SearchPresetRecipe = () => {
       setRecipeRecommendations(data.results);
     } catch (error) {
       alert('There was an error getting recipe recommendations!');
+    }
+  };
+
+  const toSave = async (recipeID) => {
+    console.log(userID);
+    console.log(recipeID);
+    try {
+      if (userID < 0) throw "logged out";
+      await axios.post('/toSave', {
+        userID: userID, 
+        recipeID: recipeID
+      })
+      .then((response) => {
+        console.log(response);
+        alert('Recipe saved')
+      });
+    } catch (error) {
+      console.log(error);
+      alert('Must be logged in to save recipes');
     }
   };
 
@@ -86,7 +113,7 @@ const SearchPresetRecipe = () => {
                       <Button variant="primary" onClick={() => navigate(`/recipe/${result.recipe_id}`)}>
                         Check out this recipe!
                       </Button>
-                      <Button variant="success">Save this recipe!</Button>
+                      <Button variant="success" onClick={() => toSave(result.recipe_id)}>Save this recipe!</Button>
                     </Card.Body>
                   </Card>
                 </Col>
