@@ -44,6 +44,7 @@ const toSave = async (recipeID) => {
       })
       .then((response) => {
         console.log(response);
+        alert('Recipe saved')
       });
     } catch (error) {
       console.log(error);
