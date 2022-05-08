@@ -3,6 +3,7 @@ import { Form, Button, Container, Modal, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import { getUserInfo } from '../fetcher.js';
 ///import SignInForm from './SignInForm';
 
 const LoginForm = () => {
@@ -18,7 +19,18 @@ const LoginForm = () => {
     try {
       const { data } = await axios.post('/login', { email, password });
       if (data.results.length > 0) {
+        localStorage.setItem('loggedIn', true);
+        getUserInfo(email, password).then((res) => {
+          const val = Object.keys(res.results).length;
+          console.log(res.results);
+          if (val === 0) {
+            alert('Username and/or password incorrect');
+          } else {
+            localStorage.setItem('userInfo', JSON.stringify(res.results));
+          }
+        });
         navigate('/');
+        window.location.reload(true);
       }
     } catch (error) {
       console.log(error);

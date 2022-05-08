@@ -3,28 +3,22 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
 const RestaurantResult = () => {
-    const [restaurant, setRestaurant] = useState([]);
     const { restaurantId } = useParams();
     const categoryList = [];
     const [categories, setCategories] = useState('');
-    const [id, setId] = useState('');
     const [name, setName] = useState('');
     const [rating, setRating] = useState('');
     const [review, setReview] = useState('');
     const [state, setState] = useState('');
     const [city, setCity] = useState('');
     const [address, setAddress] = useState('');
-    const [cuisine, setCuisine] = useState('');
 
   
     const gettingSearchResults = async () => {
       try {
         const { data } = await axios.get('/restaurant', { params: { restaurantId } });
-        setRestaurant(data.results);
-        setId(data.results[0].restaurant_id);
         setRating(data.results[0].rating);
         setCity(data.results[0].city);
-        setCuisine(data.results[0].cuisine);
         setName(data.results[0].name);
         setAddress(data.results[0].address);
         setReview(data.results[0].review_count);
@@ -45,13 +39,14 @@ const RestaurantResult = () => {
 
     return (
       <div className="item-container">
-        <div className="item-col">
-          <h1 style={{ alignSelf:'center' }}>{name}</h1>
-          <p className="item-text">Restaurant ID: {restaurantId}</p>
-          <p className="item-text">Rating: {rating}</p>
-          <p className="item-text">Address: {address} {city}, {state}</p>
-          <p className="item-text">Review Count: {review}</p>
-          <p className="item-text">Categories: {categories}</p>
+        <h1 style={{ textAlign:'center' }}>{name}</h1>
+        <div className="item-col" style={{ alignSelf:'center', maxWidth:'350px', margin:'0px auto' }}>
+          <p style={{ textAlign:"left", lineHeight:'35px' }}><strong>Restaurant ID: </strong>{restaurantId}
+            <br/><strong>Rating: </strong>{rating}
+            <br/><strong>Review Count: </strong>{review}
+            <br/><strong>Address: </strong>{address} {city}, {state}
+            <p><strong>Categories: </strong>{categories}</p>
+          </p>
         </div>
       </div>
     );

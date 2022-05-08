@@ -45,11 +45,14 @@ const SignInForm = ({ showSignIn, setShowSignIn }) => {
     try {
       const { data } = await axios.post('/login', {
         email,
-        password
+        password,
       });
       console.log(data.results.length);
       if (data.results.length > 0) {
+        localStorage.setItem('loggedIn', true);
+        localStorage.setItem('userInfo', JSON.stringify(data.results));
         navigate('/');
+        window.location.reload(true);
       }
     } catch (error) {
       alert('Could not Login');
